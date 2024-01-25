@@ -92,18 +92,21 @@ class UsersController extends Controller
     public function register(Request $request)
     {
         if ($request->isMethod('post')) {
+
             $validatedData = $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|same:password',
             ]);
+            
 
             $data = [
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
                 'password' => $validatedData['password'],
             ];
+
 
             if ($this->userModel->register($data)) {
                 $user = $this->userModel->findUserByEmail($data['email']);
@@ -113,6 +116,7 @@ class UsersController extends Controller
 
                 return redirect()->route('users.login')->with('success', 'You are registered and can log in');
             } else {
+
                 return redirect()->back()->with('error', 'Something went wrong');
             }
         } else {

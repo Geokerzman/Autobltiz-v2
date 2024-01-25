@@ -42,7 +42,7 @@ class User extends Authenticatable
             return self::create($data);
         } else {
             // Обработка ошибок при регистрации
-            return false;
+            return "Registration failed";
         }
     }
 

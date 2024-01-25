@@ -8,7 +8,7 @@
             {{-- {{ flash('register_success') }} --}}
             <h2>Login</h2>
             <p>Please fill in your credentials to log in</p>
-            <form action="{{ route('login') }}" method="post">
+            <form action="{{ route('users.login') }}" method="post">
                 @csrf
                 <div class="form-group">
                     <label for="email">Email: <sup>*</sup></label>
@@ -25,7 +25,7 @@
                         <input type="submit" value="Login" class="btn btn-success btn-block">
                     </div>
                     <div class="col">
-                        <a href="{{ route('register') }}" class="btn btn-light btn-block">No account? Register</a>
+                        <a href="{{ route('users.register') }}" class="btn btn-light btn-block">No account? Register</a>
                     </div>
                 </div>
             </form>
