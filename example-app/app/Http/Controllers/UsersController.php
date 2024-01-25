@@ -99,7 +99,7 @@ class UsersController extends Controller
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|same:password',
             ]);
-            
+
 
             $data = [
                 'name' => $validatedData['name'],

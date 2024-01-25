@@ -1,6 +1,4 @@
 <?php
-
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,70 +7,60 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable;
+use HasFactory, Notifiable;
 
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'user_group',
-    ];
+protected $fillable = [
+'name',
+'email',
+'password',
+'user_group',
+];
 
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+protected $hidden = [
+'password',
+'remember_token',
+];
 
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
+protected $casts = [
+'email_verified_at' => 'datetime',
+];
 
-    // Регистрация пользователя
-    public function register($data)
-    {
-        // Валидация данных
-        if (empty($data['email_err']) && empty($data['name_err']) && empty($data['password_err']) && empty($data['confirm_password_err'])) {
-            // Хеширование пароля
-            $data['password'] = bcrypt($data['password']);
+public function register($data)
+{
+$this->validateRegistrationData($data);
 
-            // Установка группы пользователя 1
-            $data['user_group'] = 1;
+$data['password'] = bcrypt($data['password']);
+$data['user_group'] = 1;
 
-            // Создание нового пользователя
-            return self::create($data);
-        } else {
-            // Обработка ошибок при регистрации
-            return "Registration failed";
-        }
-    }
+return $this->create($data);
+}
 
-    // Аутентификация пользователя
-    public function login($email, $password)
-    {
-        $user = self::where('email', $email)->first();
+public function login($email, $password)
+{
+$user = $this->where('email', $email)->first();
 
-        if ($user && password_verify($password, $user->password)) {
-            return $user;
-        }
+if ($user && password_verify($password, $user->password)) {
+return $user;
+}
 
-        return false;
-    }
+return null;
+}
 
-    // Назначение группы пользователю
-    public function assignUserGroup($userId, $assignedGroup)
-    {
-        return self::where('id', $userId)->update(['user_group' => $assignedGroup]);
-    }
+public function assignUserGroup($userId, $assignedGroup)
+{
+return $this->where('id', $userId)->update(['user_group' => $assignedGroup]);
+}
 
-    // Поиск пользователя по электронной почте
-    public function findUserByEmail($email)
-    {
-        return (bool)self::where('email', $email)->first();
-    }
+public function validateRegistrationData($data)
+{
+if (empty($data['name']) || empty($data['email']) || empty($data['password']) || empty($data['confirm_password'])) {
+throw new \Exception("Registration failed: All fields are required");
+}
 
-    // Получение пользователя по идентификатору
-    public function getUserById($id)
-    {
-        return self::select('id', 'name')->where('id', $id)->first();
-    }
+if ($data['password'] !== $data['confirm_password']) {
+throw new \Exception("Registration failed: Passwords do not match");
+}
+
+// Add more validation rules if necessary
+}
 }
