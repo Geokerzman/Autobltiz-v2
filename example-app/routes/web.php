@@ -24,21 +24,19 @@ Route::get('/', [PagesController::class, 'index'])->name('index');
 // Маршрут для страницы "About Us"
 Route::get('/about', [PagesController::class, 'about'])->name('pages.about');
 
-// Маршруты для работы с постами
-Route::get('/posts', [PostsController::class, 'index']);
+
+
+
+
+Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
 Route::get('/posts/show/{id}', [PostsController::class, 'show']);
-Route::get('/posts/add', [PostsController::class, 'add']);
+Route::get('/posts/add', [PostsController::class, 'add'])->name('posts.add');
 Route::post('/posts/add', [PostsController::class, 'store']);
 Route::get('/posts/edit/{id}', [PostsController::class, 'edit']);
 Route::post('/posts/edit/{id}', [PostsController::class, 'update']);
 Route::post('/posts/delete/{id}', [PostsController::class, 'destroy']);
-Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
-Route::get('/posts/add', [PostsController::class, 'add'])->name('posts.add');
-Route::get('/posts/{id}', 'PostsController@show')->name('posts.show');
+
 Route::resource('posts', PostsController::class);
-Route::get('/posts/{post}', [PostsController::class, 'show'])->name('posts.show');
-
-
 
 
 

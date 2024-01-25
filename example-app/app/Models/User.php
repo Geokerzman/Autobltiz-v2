@@ -51,10 +51,6 @@ return null;
         $this->update(['user_group' => $assignedGroup]);
     }
 
-//public function assignUserGroup($userId, $assignedGroup)
-//{
-//return $this->where('id', $userId)->update(['user_group' => $assignedGroup]);
-//}
 
 public function validateRegistrationData($data)
 {
@@ -66,6 +62,5 @@ if ($data['password'] !== $data['confirm_password']) {
 throw new \Exception("Registration failed: Passwords do not match");
 }
 
-// Add more validation rules if necessary
 }
 }
