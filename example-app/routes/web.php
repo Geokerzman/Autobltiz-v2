@@ -34,11 +34,17 @@ Route::post('/posts/edit/{id}', [PostsController::class, 'update']);
 Route::post('/posts/delete/{id}', [PostsController::class, 'destroy']);
 
 // Маршруты для работы с пользователями (если есть)
+//Route::get('/users/register', [UsersController::class, 'register'])->name('users.register');
+//Route::post('/users/register', [UsersController::class, 'store']);
+//Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
+//Route::post('/users/login', [UsersController::class, 'authenticate']);
+//Route::get('/users/logout', [UsersController::class, 'logout']);
+
+
+// Маршруты для работы с пользователями
 Route::get('/users/register', [UsersController::class, 'register'])->name('users.register');
-Route::post('/users/register', [UsersController::class, 'store']);
+Route::post('/users/register', [UsersController::class, 'register']); // Обновлено
 Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
-Route::post('/users/login', [UsersController::class, 'authenticate']);
+Route::post('/users/login', [UsersController::class, 'login']); // Обновлено
 Route::get('/users/logout', [UsersController::class, 'logout']);
-
-
 
