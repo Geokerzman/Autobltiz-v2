@@ -1,11 +1,10 @@
 @include('inc.header')
 
-<div class="wrapping row mb-3">
+<div class="container mt-3">
     <!-- Filters Display -->
-
-    <form action="{{ route('posts.index') }}" method="get">
+    <form action="{{ route('posts.index') }}" method="get" class="mb-3">
         <div class="row">
-            <div class="col-xs-4 m-2">
+            <div class="col-md-4">
                 <label for="brand" class="form-label">Марка: <sup>*</sup></label>
                 <select name="brand" id="allBrands" class="form-select form-control-lg">
                     <option value="" selected>Выберите марку</option>
@@ -14,7 +13,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-xs-4 m-2">
+            <div class="col-md-4">
                 <label for="model" class="form-label">Модель: <sup>*</sup></label>
                 <select name="model" id="model" class="form-select form-control-lg">
                     <option value="" selected>Выберите модель</option>
@@ -23,7 +22,7 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-xs-4 m-2">
+            <div class="col-md-4">
                 <label for="year" class="form-label">Год: <sup>*</sup></label>
                 <select name="year" id="year" class="form-select form-control-lg">
                     <option value="" selected>Выберите год</option>
@@ -32,36 +31,30 @@
                     @endforeach
                 </select>
             </div>
-            <div class="col-xs-4 m-2 s_input">
-                <button type="submit" class="btn btn-success">Применить фильтры</button>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-success btn-lg">Применить фильтры</button>
             </div>
         </div>
     </form>
 
     <!-- Display posts regarding the search results -->
     @forelse ($posts as $post)
-        <div class="card card-body mb-3">
-            <div class="card card-body mb-3">
+        <div class="card mb-3 border border-2 rounded-3">
+            <div class="card-body">
                 <div class="upper-bar">
-                    <i class="fa fa-circle" style="color: #029402"></i>
-                    <i class="fa fa-circle" style="color: #f1bf3f"></i>
-                    <i class="fa fa-circle" style="color: #b70101"></i>
+                    @foreach(['#f4655a', '#f39c12', '#3498db'] as $color)
+                        <i class="fas fa-circle" style="color: {{ $color }}"></i>
+                    @endforeach
                 </div>
-                <h4 class="card-title">{{ $post->title }}</h4>
-                <div class="p-2 mb-3">
+                <h4 class="card-title text-primary">{{ $post->title }}</h4>
+                <div class="mb-3 text-muted">
                     Written by {{ $post->user->name }} on {{ $post->created_at }}
                 </div>
-                <div class="p-2 mb-3">
-                    {{ $post->brand }}
-                </div>
-                <div class="p-2 mb-3">
-                    {{ $post->model }}
-                </div>
-                <div class="p-2 mb-3">
-                    {{ $post->year }}
-                </div>
+                <div class="mb-3">{{ $post->brand }}</div>
+                <div class="mb-3">{{ $post->model }}</div>
+                <div class="mb-3">{{ $post->year }}</div>
                 @if ($post->image_path)
-                    <img src="{{ asset($post->image_path) }}" class="img-fluid" alt="Post Image">
+                    <img src="{{ asset($post->image_path) }}" class="img-fluid mb-3" alt="Post Image">
                     <p class="card-text">{{ $post->description }}</p>
                 @endif
                 <a href="{{ route('posts.show', ['post' => $post->id]) }}" class="btn btn-dark">More</a>
@@ -72,13 +65,15 @@
     @endforelse
 
     <!-- Pages separation -->
-
 </div>
-<div class="row mb-3 mx-auto">
-    <div class="col-md-6">
-        <a href="{{ route('posts.add') }}" class="btn btn-danger pull-right justify-content-end">
-            <i class="fa fa-pencil"></i> Add Post
-        </a>
+
+<div class="container mt-3">
+    <div class="row">
+        <div class="col-md-6">
+            <a href="{{ route('posts.add') }}" class="btn btn-danger btn-lg">
+                <i class="fas fa-pencil-alt"></i> Add Post
+            </a>
+        </div>
     </div>
 </div>
 
@@ -87,7 +82,9 @@
     <ul class="pagination justify-content-center">
         @if ($currentPage > 1)
             <li class="page-item">
-                <a class="page-link" href="{{ route('posts.index', ['page' => $currentPage - 1]) }}">Previous</a>
+                <a class="page-link" href="{{ route('posts.index', ['page' => $currentPage - 1]) }}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
             </li>
         @endif
 
@@ -99,7 +96,9 @@
 
         @if ($currentPage < $totalPages)
             <li class="page-item">
-                <a class="page-link" href="{{ route('posts.index', ['page' => $currentPage + 1]) }}">Next</a>
+                <a class="page-link" href="{{ route('posts.index', ['page' => $currentPage + 1]) }}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
             </li>
         @endif
     </ul>

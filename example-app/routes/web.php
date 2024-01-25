@@ -32,6 +32,13 @@ Route::post('/posts/add', [PostsController::class, 'store']);
 Route::get('/posts/edit/{id}', [PostsController::class, 'edit']);
 Route::post('/posts/edit/{id}', [PostsController::class, 'update']);
 Route::post('/posts/delete/{id}', [PostsController::class, 'destroy']);
+Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
+Route::get('/posts/add', [PostsController::class, 'add'])->name('posts.add');
+Route::get('/posts/{id}', 'PostsController@show')->name('posts.show');
+Route::resource('posts', PostsController::class);
+Route::get('/posts/{post}', [PostsController::class, 'show'])->name('posts.show');
+
+
 
 
 
@@ -41,8 +48,3 @@ Route::post('/users/register', [UsersController::class, 'register']); // Обн�
 Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
 Route::post('/users/login', [UsersController::class, 'login']); // Обновлено
 Route::get('/users/logout', [UsersController::class, 'logout']);
-Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
-Route::get('/posts/add', [PostsController::class, 'add'])->name('posts.add');
-Route::get('/posts/{id}', 'PostsController@show')->name('posts.show');
-Route::resource('posts', PostsController::class);
-

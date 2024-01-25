@@ -1,0 +1,99 @@
+/* app.css */
+
+/* Navbar styling */
+.navbar {
+    background-color: #212529;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+    color: #adb5bd;
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+    color: #ffffff;
+}
+
+.navbar-dark .navbar-toggler-icon {
+    background-color: #adb5bd;
+}
+
+/* Page content styling */
+.container {
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.card {
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.upper-bar {
+    display: flex;
+    gap: 5px;
+}
+
+.fa-circle {
+    font-size: 12px;
+}
+
+/* Button styling */
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+}
+
+.btn-success:hover {
+    background-color: #218838;
+    border-color: #1e7e34;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.btn-dark {
+    background-color: #343a40;
+    border-color: #343a40;
+}
+
+.btn-dark:hover {
+    background-color: #23272b;
+    border-color: #1d2124;
+}
+
+/* Pagination styling */
+.pagination {
+    margin: 20px 0;
+}
+
+.page-link {
+    color: #343a40;
+    border-color: #dee2e6;
+}
+
+.page-link:hover {
+    color: #1d2124;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.page-item.active .page-link {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-item.active .page-link:hover {
+    background-color: #0056b3;
+    border-color: #00487d;
+}
