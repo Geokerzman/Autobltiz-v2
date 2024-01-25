@@ -64,7 +64,7 @@
                     <img src="{{ asset($post->image_path) }}" class="img-fluid" alt="Post Image">
                     <p class="card-text">{{ $post->description }}</p>
                 @endif
-                <a href="{{ route('posts.show', ['id' => $post->id]) }}" class="btn btn-dark">More</a>
+                <a href="{{ route('posts.show', ['post' => $post->id]) }}" class="btn btn-dark">More</a>
             </div>
         </div>
     @empty

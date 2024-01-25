@@ -14,7 +14,10 @@
             <span class="invalid-feedback">{{ $message }}</span>
             @enderror
         </div>
-
+        <pre>
+    Brands: {{ print_r($brands, true) }}
+    Years: {{ print_r($years, true) }}
+</pre>
         <div class="form-group">
             <label for="brand">Марка: <sup>*</sup></label>
             <select name="brand" class="form-control form-control-lg @error('brand') is-invalid @enderror">
@@ -59,7 +62,15 @@
             <input type="file" name="fileToUpload" id="fileToUpload">
             <input type="submit" value="Upload Image" name="submit">
         </div>
-
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <button type="submit" class="btn btn-success">Send</button>
     </form>
 </div>

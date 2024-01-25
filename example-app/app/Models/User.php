@@ -46,10 +46,15 @@ return $user;
 return null;
 }
 
-public function assignUserGroup($userId, $assignedGroup)
-{
-return $this->where('id', $userId)->update(['user_group' => $assignedGroup]);
-}
+    public function assignUserGroup($assignedGroup)
+    {
+        $this->update(['user_group' => $assignedGroup]);
+    }
+
+//public function assignUserGroup($userId, $assignedGroup)
+//{
+//return $this->where('id', $userId)->update(['user_group' => $assignedGroup]);
+//}
 
 public function validateRegistrationData($data)
 {

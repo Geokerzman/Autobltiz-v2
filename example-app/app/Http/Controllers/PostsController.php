@@ -5,244 +5,266 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Post;
-use App\Models\User;
 
 class PostsController extends Controller
 {
-private $postModel;
+    private $postModel;
 
-public function __construct(Post $postModel)
-{
-$this->middleware('auth');
-$this->postModel = $postModel;
-}
+    public function __construct(Post $postModel)
+    {
+        $this->middleware('auth');
+        $this->postModel = $postModel;
+    }
 
-public function index($page = 1)
-{
-$postsPerPage = 10;
+    public function index($page = 1)
+    {
+        $postsPerPage = 10;
 
-$filters = [
-'brand' => request()->input('brand'),
-'model' => request()->input('model'),
-'year' => request()->input('year'),
-];
+        $filters = [
+            'brand' => request()->input('brand'),
+            'model' => request()->input('model'),
+            'year' => request()->input('year'),
+        ];
 
-$posts = $this->getPostsWithFilters($filters, $page, $postsPerPage, $totalPosts, $totalPages);
+        $posts = $this->getPostsWithFilters($filters, $page, $postsPerPage, $totalPosts, $totalPages);
 
-$data = [
-'filters' => $filters,
-'posts' => $posts,
-'currentPage' => $page,
-'totalPages' => $totalPages,
-'totalPosts' => $totalPosts,
-'brands' => $this->postModel->getBrands(),
-'years' => $this->postModel->getYears(),
-'models' => $this->postModel->getModels(),
-'images' => $this->postModel->getImages(Auth::id()),
-];
+        $data = [
+            'filters' => $filters,
+            'posts' => $posts,
+            'currentPage' => $page,
+            'totalPages' => $totalPages,
+            'totalPosts' => $totalPosts,
+            'brands' => $this->postModel->getBrands(),
+            'years' => $this->postModel->getYears(),
+            'models' => $this->postModel->getModels(),
+            'images' => $this->postModel->getImages(Auth::id()),
+        ];
 
-return view('posts.index', $data);
-}
+        return view('posts.index', $data);
+    }
 
-public function add(Request $request)
-{
-if ($request->isMethod('post')) {
-$this->validatePostData($request);
+    public function add(Request $request)
+    {
+        if ($request->isMethod('post')) {
+            $this->validatePostData($request);
 
-$imagePath = $this->uploadImage($request->file('fileToUpload'));
+            $imagePath = $this->uploadImage($request->file('fileToUpload'));
 
-$data = [
-'title' => $request->input('title'),
-'user_id' => Auth::id(),
-'brand' => $request->input('brand'),
-'model' => $request->input('model'),
-'description' => $request->input('description'),
-'year' => $request->input('year'),
-'image_path' => $imagePath,
-];
+            $data = [
+                'title' => $request->input('title'),
+                'user_id' => Auth::id(),
+                'brand' => $request->input('brand'),
+                'model' => $request->input('model'),
+                'description' => $request->input('description'),
+                'year' => $request->input('year'),
+                'image_path' => $imagePath,
+            ];
 
-if ($this->postModel->addPost($data)) {
-return redirect()->route('posts.index')->with('success', 'Post Added');
-} else {
-return redirect()->back()->with('error', 'Something went wrong while adding the post');
-}
-} else {
-$data = [
-'title' => '',
-'brand' => '',
-'model' => '',
-'description' => '',
-'year' => '',
-'brands' => $this->postModel->getBrands(),
-'years' => $this->postModel->getYears(),
-];
+            if ($this->postModel->addPost($data)) {
+                return redirect()->route('posts.index')->with('success', 'Post Added');
 
-return view('posts.add', $data);
-}
-}
+            } else {
+                return redirect()->back()->with('error', 'Something went wrong while adding the post');
 
-public function edit($id)
-{
-if ($this->request->isMethod('post')) {
-$data = $this->sanitizePostData($id, $this->request->post());
+            }
+        } else {
+            $data = [
+                'title' => '',
+                'brand' => '',
+                'model' => '',
+                'description' => '',
+                'year' => '',
+                'brands' => $this->postModel->getBrands(),
+                'years' => $this->postModel->getYears(),
+            ];
 
-if ($this->validateAndUpdatePost($data)) {
-return redirect()->route('posts.index')->with('success', 'Post Updated');
-} else {
-return redirect()->back()->with('error', 'Something went wrong');
-}
-} else {
-$data = $this->getPostDataForEdit($id);
+            return view('posts.add', $data);
 
-return view('posts.edit', $data);
-}
-}
+        }
+    }
+    public function store(Request $request)
+    {
+        // Обработка данных из формы и сохранение в базу данных
+        $data = $request->validate([
+            'title' => 'required',
+            'body' => 'nullable', // Временно сделать поле body необязательным
+            'brand' => 'required',
+            'model' => 'required',
+            'description' => 'required',
+            'year' => 'required',
+            // Добавьте другие правила валидации по необходимости
+        ]);
 
-private function validateAndUpdatePost($data)
-{
-if (!$this->hasValidationErrors($data)) {
-if ($this->postModel->updatePost($data)) {
-return true;
-}
-}
+        // Создание нового поста с использованием данных из формы
+        Post::create($data);
 
-return false;
-}
+        // После успешного сохранения перенаправление на страницу с постами
+        return redirect()->route('posts.index')->with('success', 'Post Created');
+    }
+    public function edit($id)
+    {
+        if ($request->isMethod('post')) {
+            $data = $this->sanitizePostData($id, $request->post());
 
-private function getPostDataForEdit($id)
-{
-$post = $this->postModel->getPostById($id);
+            if ($this->validateAndUpdatePost($data)) {
+                return redirect()->route('posts.index')->with('success', 'Post Updated');
+            } else {
+                return redirect()->back()->with('error', 'Something went wrong');
+            }
+        } else {
+            $data = $this->getPostDataForEdit($id);
 
-if ($this->isPostOwner($post)) {
-$data = [
-'id' => $id,
-'title' => $post->title,
-'brand' => $post->brand,
-'model' => $post->model,
-'description' => $post->description,
-'year' => $post->year,
-'brands' => $this->postModel->getBrands(),
-'years' => $this->postModel->getYears(),
-];
+            return view('posts.edit', $data);
+        }
+    }
 
-return $data;
-}
+    private function validateAndUpdatePost($data)
+    {
+        if (!$this->hasValidationErrors($data)) {
+            if ($this->postModel->updatePost($data)) {
+                return true;
+            }
+        }
 
-return redirect()->route('posts.index');
-}
+        return false;
+    }
 
-private function sanitizePostData($id, $postData)
-{
-$postData = filter_var_array($postData, FILTER_SANITIZE_STRING);
+    private function getPostDataForEdit($id)
+    {
+        $post = $this->postModel->getPostById($id);
 
-$data = [
-'id' => $id,
-'title' => trim($postData['title']),
-'user_id' => Auth::id(),
-'brand' => trim($postData['brand']),
-'model' => trim($postData['model']),
-'description' => trim($postData['description']),
-'year' => trim($postData['year']),
-];
+        if ($this->isPostOwner($post)) {
+            $data = [
+                'id' => $id,
+                'title' => $post->title,
+                'brand' => $post->brand,
+                'model' => $post->model,
+                'description' => $post->description,
+                'year' => $post->year,
+                'brands' => $this->postModel->getBrands(),
+                'years' => $this->postModel->getYears(),
+            ];
 
-return $data;
-}
+            return $data;
+        }
 
-private function hasValidationErrors($data)
-{
-$isError = false;
+        return redirect()->route('posts.index');
+    }
 
-foreach ($data as $key => $value) {
-if (empty($value)) {
-$data[$key . '_err'] = 'Please enter ' . str_replace('_', ' ', $key);
-$isError = true;
-}
-}
+    private function sanitizePostData($id, $postData)
+    {
+        $postData = filter_var_array($postData, FILTER_SANITIZE_STRING);
 
-return $isError;
-}
+        $data = [
+            'id' => $id,
+            'title' => trim($postData['title']),
+            'user_id' => Auth::id(),
+            'brand' => trim($postData['brand']),
+            'model' => trim($postData['model']),
+            'description' => trim($postData['description']),
+            'year' => trim($postData['year']),
+        ];
 
-public function show($id)
-{
-$post = $this->postModel->getPostById($id);
+        return $data;
+    }
 
-if ($this->isPostOwner($post)) {
-$user = Auth::user();
+    private function hasValidationErrors($data)
+    {
+        $isError = false;
 
-$data = [
-'post' => $post,
-'user' => $user,
-];
+        foreach ($data as $key => $value) {
+            if (empty($value)) {
+                $data[$key . '_err'] = 'Please enter ' . str_replace('_', ' ', $key);
+                $isError = true;
+            }
+        }
 
-return view('posts.show', $data);
-}
+        return $isError;
+    }
 
-return redirect()->route('posts.index');
-}
+    public function show($id)
+    {
+        $post = $this->postModel->getPostById($id);
 
-public function delete($id)
-{
-if ($this->request->isMethod('post')) {
-$post = $this->postModel->getPostById($id);
+        if ($this->isPostOwner($post)) {
+            $user = Auth::user();
 
-if ($this->isPostOwner($post) && $this->hasDeletePermission()) {
-if ($this->postModel->deletePost($id)) {
-return redirect()->route('posts.index')->with('success', 'Post Removed');
-} else {
-return redirect()->back()->with('error', 'Something went wrong');
-}
-}
-}
+            $data = [
+                'post' => $post,
+                'user' => $user,
+            ];
 
-return redirect()->route('posts.index');
-}
+            return view('posts.show', $data);
+        }
 
-private function isPostOwner($post)
-{
-return $post->user_id == Auth::id();
-}
+        return redirect()->route('posts.index');
+    }
 
-private function hasDeletePermission()
-{
-$userGroup = Auth::user()->user_group ?? null;
+    public function delete($id)
+    {
+        if ($request->isMethod('post')) {
+            $post = $this->postModel->getPostById($id);
 
-return $userGroup === 2;
-}
+            if ($this->isPostOwner($post) && $this->hasDeletePermission()) {
+                if ($this->postModel->deletePost($id)) {
+                    return redirect()->route('posts.index')->with('success', 'Post Removed');
+                } else {
+                    return redirect()->back()->with('error', 'Something went wrong');
+                }
+            }
+        }
 
-private function validatePostData($request)
-{
-$this->validate($request, [
-'title' => 'required',
-'brand' => 'required',
-'model' => 'required',
-'description' => 'required',
-'year' => 'required',
-'fileToUpload' => 'required|image|mimes:jpeg,png,jpg,gif|max:500000',
-]);
-}
+        return redirect()->route('posts.index');
+    }
 
-private function getPostsWithFilters($filters, $page, $postsPerPage, &$totalPosts, &$totalPages)
-{
-if ($filters['brand'] || $filters['model'] || $filters['year']) {
-$posts = $this->postModel->getFilteredPosts(
-$filters['brand'],
-$filters['model'],
-$filters['year'],
-$page,
-$postsPerPage
-);
-$totalPosts = $this->postModel->getTotalFilteredPosts($filters['brand'], $filters['model'], $filters['year']);
-$totalPages = ceil($totalPosts / $postsPerPage);
-} else {
-$posts = $this->postModel->getPosts($page, $postsPerPage);
-}
+    private function isPostOwner($post)
+    {
+        return $post->user_id == Auth::id();
+    }
 
-return $posts;
-}
+    private function hasDeletePermission()
+    {
+        $userGroup = Auth::user()->user_group ?? null;
 
-private function uploadImage($file)
-{
-$imagePath = $file->store('public/images');
-return str_replace('public/', '/storage/', $imagePath);
-}
+        return $userGroup === 2;
+    }
+
+    private function validatePostData($request)
+    {
+        $this->validate($request, [
+            'title' => 'required',
+            'brand' => 'required',
+            'model' => 'required',
+            'description' => 'required',
+            'year' => 'required',
+            'fileToUpload' => 'required|image|mimes:jpeg,png,jpg,gif|max:500000',
+        ]);
+    }
+
+    private function getPostsWithFilters($filters, $page, $postsPerPage, &$totalPosts, &$totalPages)
+    {
+        if ($filters['brand'] || $filters['model'] || $filters['year']) {
+            $posts = $this->postModel->getFilteredPosts(
+                $filters['brand'],
+                $filters['model'],
+                $filters['year'],
+                $page,
+                $postsPerPage
+            );
+            $totalPosts = $this->postModel->getTotalFilteredPosts($filters['brand'], $filters['model'], $filters['year']);
+            $totalPages = ceil($totalPosts / $postsPerPage);
+        } else {
+            $posts = $this->postModel->paginate($postsPerPage);
+            $totalPosts = $posts->total();
+            $totalPages = $posts->lastPage();
+        }
+
+        return $posts;
+    }
+
+    private function uploadImage($file)
+    {
+        $imagePath = $file->store('public/images');
+        return str_replace('public/', '/storage/', $imagePath);
+    }
 }

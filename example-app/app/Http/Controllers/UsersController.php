@@ -92,7 +92,6 @@ class UsersController extends Controller
     public function register(Request $request)
     {
         if ($request->isMethod('post')) {
-
             $validatedData = $request->validate([
                 'name' => 'required',
                 'email' => 'required|email|unique:users,email',
@@ -100,29 +99,25 @@ class UsersController extends Controller
                 'confirm_password' => 'required|same:password',
             ]);
 
-
             $data = [
                 'name' => $validatedData['name'],
                 'email' => $validatedData['email'],
-                'password' => $validatedData['password'],
+                'password' => bcrypt($validatedData['password']), // Хешируем пароль
             ];
 
+            $user = $this->userModel->create($data); // Создание пользователя
 
-            if ($this->userModel->register($data)) {
-                $user = $this->userModel->findUserByEmail($data['email']);
-                $this->userModel->assignUserGroup($user->id, 1);
+            $user->assignUserGroup(1); // Присваивание пользователю группы
 
-                $this->createUserSession($user);
+            Auth::login($user); // Аутентификация пользователя
 
-                return redirect()->route('users.login')->with('success', 'You are registered and can log in');
-            } else {
 
-                return redirect()->back()->with('error', 'Something went wrong');
-            }
+            return redirect()->route('users.login')->with('success', 'You are registered and can log in');
         } else {
             return view('users.register');
         }
     }
+
 
     public function login(Request $request)
     {

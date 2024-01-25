@@ -24,8 +24,8 @@
                 </div>
                 <div class="form-group">
                     <label for="confirm_password">Confirm Password: <sup>*</sup></label>
-                    <input type="password" name="password_confirmation" class="form-control form-control-lg {{ $errors->has('password_confirmation') ? 'is-invalid' : '' }}" value="{{ old('password_confirmation') }}">
-                    <span class="invalid-feedback">{{ $errors->first('password_confirmation') }}</span>
+                    <input type="password" name="confirm_password" class="form-control form-control-lg {{ $errors->has('confirm_password') ? 'is-invalid' : '' }}" value="{{ old('confirm_password') }}">
+                    <span class="invalid-feedback">{{ $errors->first('confirm_password') }}</span>
                 </div>
 
                 <div class="row">

@@ -11,8 +11,7 @@ class CreatePostsTable extends Migration
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->text('body');
-            $table->string('brand');
+            $table->text('body')->nullable(); // Изменено на один столбец body
             $table->string('model');
             $table->text('description');
             $table->year('year');

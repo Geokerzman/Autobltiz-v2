@@ -33,12 +33,6 @@ Route::get('/posts/edit/{id}', [PostsController::class, 'edit']);
 Route::post('/posts/edit/{id}', [PostsController::class, 'update']);
 Route::post('/posts/delete/{id}', [PostsController::class, 'destroy']);
 
-// Маршруты для работы с пользователями (если есть)
-//Route::get('/users/register', [UsersController::class, 'register'])->name('users.register');
-//Route::post('/users/register', [UsersController::class, 'store']);
-//Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
-//Route::post('/users/login', [UsersController::class, 'authenticate']);
-//Route::get('/users/logout', [UsersController::class, 'logout']);
 
 
 // Маршруты для работы с пользователями
@@ -47,4 +41,8 @@ Route::post('/users/register', [UsersController::class, 'register']); // Обн�
 Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
 Route::post('/users/login', [UsersController::class, 'login']); // Обновлено
 Route::get('/users/logout', [UsersController::class, 'logout']);
+Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
+Route::get('/posts/add', [PostsController::class, 'add'])->name('posts.add');
+Route::get('/posts/{id}', 'PostsController@show')->name('posts.show');
+Route::resource('posts', PostsController::class);
 
