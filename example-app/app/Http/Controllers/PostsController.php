@@ -4,29 +4,29 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Post;
+use App\Services\PostService;
 
 class PostsController extends Controller
 {
-    private $postModel;
+    private $postService;
 
-    public function __construct(Post $postModel)
+    public function __construct(PostService $postService)
     {
         $this->middleware('auth');
-        $this->postModel = $postModel;
+        $this->postService = $postService;
     }
 
-    public function index($page = 1)
+    public function index(Request $request, $page = 1)
     {
         $postsPerPage = 10;
 
         $filters = [
-            'brand' => request()->input('brand'),
-            'model' => request()->input('model'),
-            'year' => request()->input('year'),
+            'brand' => $request->input('brand'),
+            'model' => $request->input('model'),
+            'year' => $request->input('year'),
         ];
 
-        $posts = $this->getPostsWithFilters($filters, $page, $postsPerPage, $totalPosts, $totalPages);
+        $posts = $this->postService->getPostsWithFilters($filters, $page, $postsPerPage, $totalPosts, $totalPages);
 
         $data = [
             'filters' => $filters,
@@ -34,10 +34,10 @@ class PostsController extends Controller
             'currentPage' => $page,
             'totalPages' => $totalPages,
             'totalPosts' => $totalPosts,
-            'brands' => $this->postModel->getBrands(),
-            'years' => $this->postModel->getYears(),
-            'models' => $this->postModel->getModels(),
-            'images' => $this->postModel->getImages(Auth::id()),
+            'brands' => $this->postService->getBrands(),
+            'years' => $this->postService->getYears(),
+            'models' => $this->postService->getModels(),
+            'images' => $this->postService->getImages(Auth::id()),
         ];
 
         return view('posts.index', $data);
@@ -48,7 +48,7 @@ class PostsController extends Controller
         if ($request->isMethod('post')) {
             $this->validatePostData($request);
 
-            $imagePath = $this->uploadImage($request->file('fileToUpload'));
+            $imagePath = $this->postService->uploadImage($request->file('fileToUpload'));
 
             $data = [
                 'title' => $request->input('title'),
@@ -60,12 +60,10 @@ class PostsController extends Controller
                 'image_path' => $imagePath,
             ];
 
-            if ($this->postModel->addPost($data)) {
+            if ($this->postService->addPost($data)) {
                 return redirect()->route('posts.index')->with('success', 'Post Added');
-
             } else {
                 return redirect()->back()->with('error', 'Something went wrong while adding the post');
-
             }
         } else {
             $data = [
@@ -74,14 +72,14 @@ class PostsController extends Controller
                 'model' => '',
                 'description' => '',
                 'year' => '',
-                'brands' => $this->postModel->getBrands(),
-                'years' => $this->postModel->getYears(),
+                'brands' => $this->postService->getBrands(),
+                'years' => $this->postService->getYears(),
             ];
 
             return view('posts.add', $data);
-
         }
     }
+
     public function store(Request $request)
     {
         // Обработка данных из формы и сохранение в базу данных
@@ -96,12 +94,13 @@ class PostsController extends Controller
         ]);
 
         // Создание нового поста с использованием данных из формы
-        Post::create($data);
+        $this->postService->createPost($data);
 
         // После успешного сохранения перенаправление на страницу с постами
         return redirect()->route('posts.index')->with('success', 'Post Created');
     }
-    public function edit($id)
+
+    public function edit(Request $request, $id)
     {
         if ($request->isMethod('post')) {
             $data = $this->sanitizePostData($id, $request->post());
@@ -121,7 +120,7 @@ class PostsController extends Controller
     private function validateAndUpdatePost($data)
     {
         if (!$this->hasValidationErrors($data)) {
-            if ($this->postModel->updatePost($data)) {
+            if ($this->postService->updatePost($data)) {
                 return true;
             }
         }
@@ -131,7 +130,7 @@ class PostsController extends Controller
 
     private function getPostDataForEdit($id)
     {
-        $post = $this->postModel->getPostById($id);
+        $post = $this->postService->getPostById($id);
 
         if ($this->isPostOwner($post)) {
             $data = [
@@ -141,8 +140,8 @@ class PostsController extends Controller
                 'model' => $post->model,
                 'description' => $post->description,
                 'year' => $post->year,
-                'brands' => $this->postModel->getBrands(),
-                'years' => $this->postModel->getYears(),
+                'brands' => $this->postService->getBrands(),
+                'years' => $this->postService->getYears(),
             ];
 
             return $data;
@@ -184,7 +183,7 @@ class PostsController extends Controller
 
     public function show($id)
     {
-        $post = $this->postModel->getPostById($id);
+        $post = $this->postService->getPostById($id);
 
         if ($this->isPostOwner($post)) {
             $user = Auth::user();
@@ -200,13 +199,13 @@ class PostsController extends Controller
         return redirect()->route('posts.index');
     }
 
-    public function delete($id)
+    public function delete(Request $request, $id)
     {
         if ($request->isMethod('post')) {
-            $post = $this->postModel->getPostById($id);
+            $post = $this->postService->getPostById($id);
 
             if ($this->isPostOwner($post) && $this->hasDeletePermission()) {
-                if ($this->postModel->deletePost($id)) {
+                if ($this->postService->deletePost($id)) {
                     return redirect()->route('posts.index')->with('success', 'Post Removed');
                 } else {
                     return redirect()->back()->with('error', 'Something went wrong');
@@ -239,32 +238,5 @@ class PostsController extends Controller
             'year' => 'required',
             'fileToUpload' => 'required|image|mimes:jpeg,png,jpg,gif|max:500000',
         ]);
-    }
-
-    private function getPostsWithFilters($filters, $page, $postsPerPage, &$totalPosts, &$totalPages)
-    {
-        if ($filters['brand'] || $filters['model'] || $filters['year']) {
-            $posts = $this->postModel->getFilteredPosts(
-                $filters['brand'],
-                $filters['model'],
-                $filters['year'],
-                $page,
-                $postsPerPage
-            );
-            $totalPosts = $this->postModel->getTotalFilteredPosts($filters['brand'], $filters['model'], $filters['year']);
-            $totalPages = ceil($totalPosts / $postsPerPage);
-        } else {
-            $posts = $this->postModel->paginate($postsPerPage);
-            $totalPosts = $posts->total();
-            $totalPages = $posts->lastPage();
-        }
-
-        return $posts;
-    }
-
-    private function uploadImage($file)
-    {
-        $imagePath = $file->store('public/images');
-        return str_replace('public/', '/storage/', $imagePath);
     }
 }

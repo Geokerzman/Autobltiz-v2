@@ -1,22 +1,73 @@
 /* app.css */
 
 /* Navbar styling */
-.navbar {
-    background-color: #212529;
+
+body.about-us {
+    background-image: url('https://cdn.dribbble.com/userupload/5540031/file/original-3369ff2dfaab08eb2eaae6c59618da1a.jpg?resize=1504x846');
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;  /* Убедитесь, что отступы по умолчанию отсутствуют */
+    padding: 0; /* Убедитесь, что отступы по умолчанию отсутствуют */
+    height: 100vh; /* Установите высоту на весь видимый экран */
 }
 
-.navbar-dark .navbar-nav .nav-link {
-    color: #adb5bd;
+#mainNavigation a {
+    font-family: 'Cabin', sans-serif;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
-.navbar-dark .navbar-nav .nav-link:hover {
-    color: #ffffff;
+.navbar-nav {
+    margin-right: auto;
 }
 
-.navbar-dark .navbar-toggler-icon {
-    background-color: #adb5bd;
+.navbar-nav .nav-item {
+    min-width: 0; /* Remove min-width for nav-item */
 }
 
+.navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem;
+}
+
+.navbar-nav .nav-item:last-child {
+    margin-right: 0;
+}
+
+.navbar-nav .nav-link i {
+    font-size: 1.25rem; /* Adjust icon size */
+}
+
+.navbar-nav .nav-link.active {
+    color: #fff; /* Adjust active link color */
+}
+
+.navbar-toggler {
+    border: none;
+}
+
+#mainNavigation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 123;
+    padding-bottom: 120px;
+    background: -moz-linear-gradient(top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
+    background: -webkit-linear-gradient(top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#a6000000', endColorstr='#00000000',
+    GradientType=0);
+}
+
+#navbarNavDropdown.collapsing .navbar-nav,
+#navbarNavDropdown.show .navbar-nav {
+    background: #037582;
+    padding: 12px;
+}
 /* Page content styling */
 .container {
     background-color: #ffffff;
@@ -39,6 +90,10 @@
 
 .fa-circle {
     font-size: 12px;
+}
+
+.bg-dots-darker{
+    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E")'/%3E%3C/svg%3E);
 }
 
 /* Button styling */
@@ -97,3 +152,4 @@
     background-color: #0056b3;
     border-color: #00487d;
 }
+

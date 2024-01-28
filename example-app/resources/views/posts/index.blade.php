@@ -1,6 +1,6 @@
 @include('inc.header')
 
-<div class="container mt-3">
+<div class="container bg-dots-darker mt-3">
     <!-- Filters Display -->
     <form action="{{ route('posts.index') }}" method="get" class="mb-3">
         <div class="row">

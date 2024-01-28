@@ -46,3 +46,5 @@ Route::post('/users/register', [UsersController::class, 'register']); // Обн�
 Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
 Route::post('/users/login', [UsersController::class, 'login']); // Обновлено
 Route::get('/users/logout', [UsersController::class, 'logout']);
+
+
