@@ -7,7 +7,7 @@ body.about-us {
     background-size: 100% 100%;
     background-position: center;
     background-repeat: no-repeat;
-    margin: 0;  /* Убедитесь, что отступы по умолчанию отсутствуют */
+    margin: 0; /* Убедитесь, что отступы по умолчанию отсутствуют */
     padding: 0; /* Убедитесь, что отступы по умолчанию отсутствуют */
     height: 100vh; /* Установите высоту на весь видимый экран */
 }
@@ -68,6 +68,7 @@ body.about-us {
     background: #037582;
     padding: 12px;
 }
+
 /* Page content styling */
 .container {
     background-color: #ffffff;
@@ -92,8 +93,8 @@ body.about-us {
     font-size: 12px;
 }
 
-.bg-dots-darker{
-    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E")'/%3E%3C/svg%3E);
+.bg-dots-darker {
+    background-image: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.22676 0C1.91374 0 2.45351 0.539773 2.45351 1.22676C2.45351 1.91374 1.91374 2.45351 1.22676 2.45351C0.539773 2.45351 0 1.91374 0 1.22676C0 0.539773 0.539773 0 1.22676 0Z' fill='rgba(0,0,0,0.07)'/%3E%3C/svg%3E") '/%3E%3C/svg%3E);
 }
 
 /* Button styling */

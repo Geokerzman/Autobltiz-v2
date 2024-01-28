@@ -16,16 +16,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-
-
 // Маршрут для главной страницы
 Route::get('/', [PagesController::class, 'index'])->name('index');
 
 // Маршрут для страницы "About Us"
 Route::get('/about', [PagesController::class, 'about'])->name('pages.about');
-
-
-
 
 
 Route::get('/posts', [PostsController::class, 'index'])->name('posts.index');
@@ -35,16 +30,12 @@ Route::post('/posts/add', [PostsController::class, 'store']);
 Route::get('/posts/edit/{id}', [PostsController::class, 'edit']);
 Route::post('/posts/edit/{id}', [PostsController::class, 'update']);
 Route::post('/posts/delete/{id}', [PostsController::class, 'destroy']);
-
 Route::resource('posts', PostsController::class);
 
-
-
-// Маршруты для работы с пользователями
 Route::get('/users/register', [UsersController::class, 'register'])->name('users.register');
-Route::post('/users/register', [UsersController::class, 'register']); // Обновлено
+Route::post('/users/register', [UsersController::class, 'register']);
 Route::get('/users/login', [UsersController::class, 'login'])->name('users.login');
-Route::post('/users/login', [UsersController::class, 'login']); // Обновлено
+Route::post('/users/login', [UsersController::class, 'login']);
 Route::get('/users/logout', [UsersController::class, 'logout']);
 
 

@@ -86,6 +86,7 @@ class PostService
         $imagePath = $file->store('public/images');
         return str_replace('public/', '/storage/', $imagePath);
     }
+
     public function createPost($data)
     {
         return $this->postModel->create($data);
